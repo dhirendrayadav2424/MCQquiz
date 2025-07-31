@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MCQ Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #3E5F44;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .container {
+      background: #E8FFD7;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px 20px rgba(251, 252, 251, 0.1);
+      max-width: 500px;
+      width: 100%;
+    
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    #startBtn, #submitBtn, #skipBtn, #restartBtn {
+      padding: 10px 20px;
+      background: #67986a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+    #scoreCard {
+      display: none;
+      text-align: center;
+    }
+    #playerName {
+        font-family:Georgia, 'Times New Roman', Times, serif;
+        width: 250px;
+        text-align: center;
+        text-transform: capitalize;
+        
+    }
+    #startScreen{
+        text-align: center;
+
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="startScreen">
+    <h2>Welcome to the MCQ Quiz!</h2>
+    <input type="text" id="playerName" placeholder="Enter your name" /><br>
+    <button id="startBtn">Start Quiz</button>
+  </div>
+
+  <div class="container" id="quizScreen" style="display: none;">
+    <h3 id="welcomeMsg"></h3>
+    <div class="question" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <button id="submitBtn">Submit</button>
+    <button id="skipBtn">Skip</button>
+  </div>
+
+  <div class="container" id="scoreCard">
+    <h2>Quiz Completed!</h2>
+    <p id="finalScore"></p>
+    <button id="restartBtn">Play Again</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which SQL command is used to remove a record from a table?",
+        options: ["REMOVE", "DELETE", "DROP", "CLEAR"],
+        answer: "DELETE"
+      },
+      {
+        question: "Which of the following is not an operating system?",
+        options: ["Linux", "Windows", "Oracle", "macOs"],
+        answer: "Oracle"
+      },
+      {
+        question: "Which device is used to connect different networks?",
+        options: ["Hub", "Switch", "Router", "Repeater"],
+        answer: "Router"
+      },
+       {
+        question: "Which of the following is not a high-level programming language?",
+        options: ["C++", "Python", "Java", "Assembly"],
+        answer: "Assembly"
+      },
+       {
+        question: "What is the default return type of a function in C if not specified?",
+        options: ["Void", "int", "float", "double"],
+        answer: "int"
+      }
+    ];
+
+    const startBtn = document.getElementById('startBtn');
+    const playerNameInput = document.getElementById('playerName');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('options');
+    const submitBtn = document.getElementById('submitBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const finalScore = document.getElementById('finalScore');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let currentQuestion = 0;
+    let score = 0;
+    let playerName = "";
+
+    startBtn.onclick = () => {
+      playerName = playerNameInput.value.trim();
+      if (playerName === "") {
+        alert("Please enter your name.");
+        return;
+      }
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'block';
+      welcomeMsg.textContent = `Good luck, ${playerName}!`;
+      loadQuestion();
+    };
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionText.textContent = q.question;
+      optionsContainer.innerHTML = "";
+      q.options.forEach(opt => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="radio" name="option" value="${opt}" /> ${opt}`;
+        optionsContainer.appendChild(label);
+      });
+    }
+
+    submitBtn.onclick = () => {
+      const selected = document.querySelector('input[name="option"]:checked');
+      if (!selected) {
+        alert("Please select an option.");
+        return;
+      }
+      const answer = selected.value;
+      if (answer === questions[currentQuestion].answer) {
+        score++;
+      }
+      moveToNext();
+    };
+
+    skipBtn.onclick = () => {
+      moveToNext(); // just go to next question, no score change
+    };
+
+    function moveToNext() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    }
+
+    function showScore() {
+      document.getElementById('quizScreen').style.display = 'none';
+      document.getElementById('scoreCard').style.display = 'block';
+      finalScore.textContent = `${playerName}, your score is ${score} out of ${questions.length}`;
+    }
+
+    restartBtn.onclick = () => {
+      currentQuestion = 0;
+      score = 0;
+      playerName = "";
+      document.getElementById('scoreCard').style.display = 'none';
+      document.getElementById('startScreen').style.display = 'block';
+      playerNameInput.value = "";
+    };
+  </script>
+</body>
+</html>
